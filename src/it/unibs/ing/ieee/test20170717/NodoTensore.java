@@ -57,7 +57,10 @@ public class NodoTensore extends AbstractTensor{
 		this.childrenTensore = tensorList;
 	}
 
-	public NodoTensore() {}
+	public NodoTensore() {
+		childrenTensore = new ArrayList<>();
+		childrenNodoTensore = new ArrayList<>();
+	}
 
 	public char getLabel() {
 		return label;
@@ -92,9 +95,13 @@ public class NodoTensore extends AbstractTensor{
 	}
 	
 	public String toString() {
-		StringBuffer str = new StringBuffer(this.getLabel() + "\n");
+		StringBuffer str = new StringBuffer("\n\n\n___"+this.getLabel() + "\n");
+		for(Tensore t : childrenTensore)
+		str.append(t + "\n");
+		str.append("\n\n\n");
 		
-		str.append(this.getLabel());
+		for(NodoTensore t : childrenNodoTensore)
+		str.append(t + "\n");
 		
 		return str.toString();
 	}

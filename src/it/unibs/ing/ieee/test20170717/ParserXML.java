@@ -40,6 +40,7 @@ public class ParserXML {
 		List<Matrice> matrixList = null;
 		List<Tensore> copy = null;
 		Stack<NodoTensore> ordineNodi = new Stack<>();
+		List<NodoTensore> list = new ArrayList<>();
 
 		// Ciclo di lettura file (finchè c'è da leggere)
 		while (reader.hasNext()) {
@@ -54,7 +55,6 @@ public class ParserXML {
 					System.out.println("Inizio albero.");
 					break;
 				case "TensorNode":
-					copy = new ArrayList<>(tensorList);
 					nodoCorrente =  new NodoTensore();
 					tensorList = new ArrayList<>();
 					break;
@@ -97,21 +97,25 @@ public class ParserXML {
 					contaRighe = 0;
 					break;
 				case "tensor":
+					//Converte un ArrayList in un array (Con aiuto di Stack Overflow)
 					Matrice[] t = matrixList.toArray(new Matrice[matrixList.size()]);
+					
 					tensore.setTensore(t);
+					tensore.setIdPadre(corrente);
 					tensorList.add(tensore);
 					break;
 				case "TensorNode":
 					nodoCorrente.setChildrenTensore(tensorList);
 					NodoTensore uscente = ordineNodi.pop();
-					System.out.println(uscente + " aa");
-					System.out.println(ordineNodi.peek() + " next");
-					NodoTensore tmp = new NodoTensore(ordineNodi.pop());
-					tmp.addNodo(uscente);
-					ordineNodi.push(tmp);
-					//System.out.println(uscente.getChildrenNodoTensore());
+					if(!ordineNodi.isEmpty()) {
+						NodoTensore tmp = ordineNodi.pop();
+						tmp.addNodo(uscente);
+						ordineNodi.push(tmp);
+						list.add(tmp);
+					}
 					break;
 				case "TTree":
+					System.out.println("Fine albero");
 					break;
 				}
 				break;
@@ -122,9 +126,14 @@ public class ParserXML {
 			}
 
 		}
-
 		
 	}
+	/**
+	 * Crea una matrice quadrata di ordine nRighe
+	 * @param list La lista da spezzare
+	 * @param nRighe Il numero di righe e di colonne
+	 * @return La matrice creata
+	 */
 	private Matrice creaMatriceDaList(Queue<Integer> list, int nRighe) {
 		Queue queue = new LinkedList(list);
 		Matrice m = new Matrice(queue.size() / nRighe);
