@@ -17,7 +17,7 @@ import javax.xml.stream.XMLStreamReader;
 
 public class ParserXML {
 	File filename;
-	public void parseXml(String filename) throws FileNotFoundException, XMLStreamException {
+	public List<NodoTensore> parseXml(String filename) throws FileNotFoundException, XMLStreamException {
 
 		try {
 			this.filename = new File(filename);
@@ -29,17 +29,17 @@ public class ParserXML {
 		// Inizializzo le variabili
 		XMLInputFactory factory = XMLInputFactory.newInstance();
 		XMLStreamReader reader = factory.createXMLStreamReader(new FileInputStream(filename));
-		
+
 		String content = "";
+		NodoTensore root = null;
+		NodoTensore node = null;
 		List<Tensore> tensorList = null;
-		char corrente = '0';
-		NodoTensore nodoCorrente = null;
 		Tensore tensore = null;
 		Queue<Integer> arrayMatrix = null;
 		int contaRighe = 0;
 		List<Matrice> matrixList = null;
-		List<Tensore> copy = null;
-		Stack<NodoTensore> ordineNodi = new Stack<>();
+		Stack<NodoTensore> tensorNodeList = null;
+		NodoTensore corrente = null;
 
 		// Ciclo di lettura file (finchè c'è da leggere)
 		while (reader.hasNext()) {
@@ -51,15 +51,22 @@ public class ParserXML {
 			case XMLStreamConstants.START_ELEMENT:
 				switch (reader.getLocalName()) {
 				case "TTree":
-					System.out.println("Inizio albero.");
+					// Se trovo il tag <TTree> creo il nodo Root
+					root = new NodoTensore();
+
+					root.setRoot(true);
+
+					corrente = root;
+					tensorNodeList = new Stack<>();
+					System.out.println("Inizio a leggere l'albero");
 					break;
+
 				case "TensorNode":
-					copy = new ArrayList<>(tensorList);
-					nodoCorrente =  new NodoTensore();
+					node = new NodoTensore();
 					tensorList = new ArrayList<>();
 					break;
 				case "tensor":
-					tensore = new Tensore();
+					tensore = new Tensore(); // Non so ancora la dimensione del tensore
 					matrixList = new ArrayList<>();
 					break;
 				case "matrix":
@@ -85,14 +92,14 @@ public class ParserXML {
 					System.out.println("Ho finito di leggere il documento");
 					break;
 				case "label":
-					nodoCorrente.setLabel(content.charAt(0));
-					ordineNodi.push(nodoCorrente);
+					node.setLabel(content.charAt(0));
 					break;
 				case "column":
 					arrayMatrix.add(Integer.parseInt(content));
 					break;
-				case "matrix":					
+				case "matrix":
 					Matrice m  = creaMatriceDaList(arrayMatrix, contaRighe);
+//					System.out.println(m);
 					matrixList.add(m);
 					contaRighe = 0;
 					break;
@@ -102,17 +109,14 @@ public class ParserXML {
 					tensorList.add(tensore);
 					break;
 				case "TensorNode":
-					nodoCorrente.setChildrenTensore(tensorList);
-					NodoTensore uscente = ordineNodi.pop();
-					System.out.println(uscente + " aa");
-					System.out.println(ordineNodi.peek() + " next");
-					NodoTensore tmp = new NodoTensore(ordineNodi.pop());
-					tmp.addNodo(uscente);
-					ordineNodi.push(tmp);
-					//System.out.println(uscente.getChildrenNodoTensore());
+					node.setChildrenTensore(tensorList);
+					System.out.println(node);
+					System.out.println("indice: " + node.getChildren().get(0).calcolaIndice());
+					tensorNodeList.add(node);
+					corrente.setChildrenNodoTensore(tensorNodeList);
 					break;
 				case "TTree":
-					break;
+					root.setChildrenNodoTensore(tensorNodeList);
 				}
 				break;
 
@@ -122,20 +126,23 @@ public class ParserXML {
 			}
 
 		}
+		System.out.println("root");
+		System.out.println(root);
 
-		
+		return tensorNodeList;
+
 	}
 	private Matrice creaMatriceDaList(Queue<Integer> list, int nRighe) {
 		Queue queue = new LinkedList(list);
 		Matrice m = new Matrice(queue.size() / nRighe);
 		int[][] matrice = new int[nRighe][nRighe];
-		
+
 		for(int r=0; r<nRighe; r++)
 			for(int c=0; c<nRighe; c++)
 				matrice[r][c] = (int) queue.poll();
-		
+
 		m.setMatrice(matrice);
-		
+
 		return m;
 	}
 }

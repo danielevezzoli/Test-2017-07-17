@@ -26,38 +26,54 @@ public class Matrice {
 		return determinante;
 	}
 
-	public int determinante() {
-		int det=0;
-		for(int i=0; i<dimensione; i++) {
-//			
-		}
-		return 0;
+	/**
+	 * Metodo che calcola il determinante di una matrice secondo il metodo di Sarrus
+	 * @return il determinante della matrice
+	 */
+	private int sarrus() {
+		if(this.dimensione == 3)
+			return (matrice[0][0]*matrice[1][1]*matrice[2][2])+(matrice[0][1]*matrice[1][2]*matrice[2][0])+(matrice[0][2]*matrice[1][0]*matrice[2][1])
+					-(matrice[2][0]*matrice[1][1]*matrice[0][2])-(matrice[0][0]*matrice[2][1]*matrice[1][2])-(matrice[0][1]*matrice[1][0]*matrice[2][2]);
+		if(this.dimensione == 2)
+			return (matrice[0][0]*matrice[1][1]) - (matrice[1][0]*matrice[0][1]);
+		else
+			return matrice[0][0];
 	}
-
-	public int laplace(Matrice matrice) {
+	/**
+	 * Funzione per il calcolo del determinante di una matrice
+	 * Se matrice ha dimensione < 3 utilizza Sarrus altrimenti utilizza Laplace
+	 * @param matrice La matrice di cui calcolare il determinante
+	 * @return il determinante della matrice
+	 */
+	public int determinante(Matrice matrice) {
 		int[][] m = matrice.getMatrice();
 		
 		int det = 0;
+
 		
-		if(matrice.getDimensione()==1)
-			return matrice.getMatrice()[0][0];
+		if(matrice.getDimensione()<3)
+			return sarrus();
 		
 		for(int r = 0; r<matrice.getDimensione(); r++) {
 			int valore = matrice.getMatrice()[r][0];
 			Matrice tmp = matrice.minore(r, 0);
-			
-//			tmp.print();
-//			System.out.println("\n\n\n");
-			det +=   valore * (int) Math.pow(-1, r+2) * laplace(tmp);
+
+			det +=   valore * (int) Math.pow(-1, r+2) * determinante(tmp);
 			
 		}
 		
+		determinante = det;
 		return det;
 			
 			
 		
 	}
-
+	/**
+	 * Metodo che calcola il minore complementare di una matrice
+	 * @param row La riga da escludere
+	 * @param col La colonna da escludere
+	 * @return il minore
+	 */
 	public Matrice minore(int row, int col) {
 		int newDim = dimensione-1;
 		int i,j; i = j= 0;
@@ -81,13 +97,15 @@ public class Matrice {
 	}
 	
 
-	public void print() {
+	public String toString() {
+		StringBuffer str = new StringBuffer();
 		for (int row = 0; row < dimensione; row ++) {
 		    for (int col = 0; col < dimensione; col++) {
-		    	System.out.print(matrice[row][col] + " ");
+		    	str.append(matrice[row][col] + " ");
 		    }
-		    System.out.println();
+		    str.append("\n");
 		}
+		return str.toString();
 	}
 	
 }
