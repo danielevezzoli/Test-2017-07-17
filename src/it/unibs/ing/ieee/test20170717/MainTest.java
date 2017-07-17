@@ -3,29 +3,22 @@ package it.unibs.ing.ieee.test20170717;
 public class MainTest {
 
 	public static void main(String[] args) {
-		Matrice m = new Matrice(4);
-		int[][] table = new int[4][4];
+		int dim = 3;
+		Matrice m = new Matrice(dim);
+		int[][] table = new int[dim][dim];
 		int n=1;
-		for (int row = 0; row < 4; row ++)
-		    for (int col = 0; col < 4; col++) {
+		for (int row = 0; row < dim; row ++) {
+		    for (int col = 0; col < dim; col++) {
 		        table[row][col] = n;
+		        System.out.print(table[row][col]);
 		        n++;
 		    }
-		
-		for (int row = 0; row < 4; row ++) {
-		    for (int col = 0; col < 4; col++)
-		    	System.out.print(table[row][col]+"  ");
 		    System.out.println();
 		}
 		
 		m.setMatrice(table);
-		table = m.minore(1, 2);
-		
-		for (int row = 0; row < 3; row ++) {
-		    for (int col = 0; col < 3; col++)
-		    	System.out.print(table[row][col]);
-		    System.out.println();
-		}
+		System.out.println(m.laplace(m));
+
 		
 	}
 

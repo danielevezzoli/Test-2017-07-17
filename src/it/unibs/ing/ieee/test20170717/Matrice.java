@@ -29,17 +29,36 @@ public class Matrice {
 	public int determinante() {
 		int det=0;
 		for(int i=0; i<dimensione; i++) {
-			det += laplace(minore(i,0));
+//			
 		}
 		return 0;
 	}
 
-	private int laplace(int[][] minore) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int laplace(Matrice matrice) {
+		int[][] m = matrice.getMatrice();
+		
+		int det = 0;
+		
+		if(matrice.getDimensione()==1)
+			return matrice.getMatrice()[0][0];
+		
+		for(int r = 0; r<matrice.getDimensione(); r++) {
+			int valore = matrice.getMatrice()[r][0];
+			Matrice tmp = matrice.minore(r, 0);
+			
+			tmp.print();
+			System.out.println("\n\n\n");
+			det +=   valore * (int) Math.pow(-1, r+2) * laplace(tmp);
+			
+		}
+		
+		return det;
+			
+			
+		
 	}
 
-	public int[][] minore(int row, int col) {
+	public Matrice minore(int row, int col) {
 		int newDim = dimensione-1;
 		int i,j; i = j= 0;
 		int[][] tmp = new int[newDim][newDim];
@@ -53,13 +72,22 @@ public class Matrice {
 					j++;
 
 			}
-			System.out.println();
 			if(r != row)
 				i++;
 		}
-		return tmp;
+		Matrice m = new Matrice(newDim);
+		m.setMatrice(tmp);
+		return m;
 	}
 	
-	
+
+	public void print() {
+		for (int row = 0; row < dimensione; row ++) {
+		    for (int col = 0; col < dimensione; col++) {
+		    	System.out.print(matrice[row][col] + " ");
+		    }
+		    System.out.println();
+		}
+	}
 	
 }
