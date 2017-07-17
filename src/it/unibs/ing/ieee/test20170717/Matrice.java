@@ -46,8 +46,8 @@ public class Matrice {
 			int valore = matrice.getMatrice()[r][0];
 			Matrice tmp = matrice.minore(r, 0);
 			
-			tmp.print();
-			System.out.println("\n\n\n");
+//			tmp.print();
+//			System.out.println("\n\n\n");
 			det +=   valore * (int) Math.pow(-1, r+2) * laplace(tmp);
 			
 		}
