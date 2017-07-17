@@ -41,7 +41,7 @@ public class Matrice {
 	}
 	/**
 	 * Funzione per il calcolo del determinante di una matrice
-	 * Se matrice ha dimensione < 3 utilizza Sarrus altrimenti utilizza Laplace
+	 * Se matrice ha dimensione minore di 3 utilizza Sarrus altrimenti utilizza Laplace
 	 * @param matrice La matrice di cui calcolare il determinante
 	 * @return il determinante della matrice
 	 */
